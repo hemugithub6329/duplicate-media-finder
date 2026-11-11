@@ -32,6 +32,7 @@ if errorlevel 1 (
 )
 
 copy /y start_web_server.bat dist\DuplicateMediaFinder\StartMobile.bat >nul
+copy /y WINDOWS_APP_README.txt dist\DuplicateMediaFinder\README_FIRST.txt >nul
 
 echo.
 echo Build complete: dist\DuplicateMediaFinder\DuplicateMediaFinder.exe

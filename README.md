@@ -8,6 +8,12 @@ instead of permanently deleting them.
 > **New here?** Follow [the beginner setup guide](DESKTOP_APP_SETUP.md). You do
 > not need Node.js or `node_modules`; this project uses Python.
 
+> **Just want the ready-to-run Windows app?** Open the repository's
+> [Releases page](https://github.com/hemugithub6329/duplicate-media-finder/releases/latest),
+> download `DuplicateMediaFinder-Windows.zip`, extract the whole ZIP folder,
+> then double-click `DuplicateMediaFinder.exe`. Python is not needed on the
+> computer running the released app.
+
 ## What it can do
 
 - Find exact duplicates of any file type using SHA-256.
@@ -66,10 +72,11 @@ Python is still required on the computer that builds the app:
    computer. Do not copy only the `.exe`.
 5. Double-click `DuplicateMediaFinder.exe` in that folder.
 
-The generated build is not committed to this source repository. Rebuild after
-source changes to include the newer code. Windows may warn about an unsigned
-locally built executable; review any warning in Windows Security and do not
-disable antivirus protection.
+The generated build is not committed to this source repository. New Windows
+builds are published on the [GitHub Releases page](https://github.com/hemugithub6329/duplicate-media-finder/releases)
+when a project version is released. Rebuild after source changes to include the
+newer code. Windows may warn about an unsigned executable; review any warning
+in Windows Security and do not disable antivirus protection.
 
 ## Open the app on an Android phone
 

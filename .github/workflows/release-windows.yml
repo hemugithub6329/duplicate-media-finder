@@ -1,0 +1,97 @@
+name: Build and publish Windows app
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install app and build dependencies
+        run: python -m pip install -r requirements-build.txt
+
+      - name: Build Windows app
+        run: |
+          python -m PyInstaller `
+            --noconfirm `
+            --clean `
+            --onedir `
+            --windowed `
+            --name DuplicateMediaFinder `
+            --icon app_icon.ico `
+            --collect-all streamlit `
+            --add-data "app.py;." `
+            --add-data "duplicate_core.py;." `
+            --add-data "file_preview.py;." `
+            --add-data "app_icon.ico;." `
+            tray_launcher.py
+
+          Copy-Item start_web_server.bat dist/DuplicateMediaFinder/StartMobile.bat
+          Copy-Item WINDOWS_APP_README.txt dist/DuplicateMediaFinder/README_FIRST.txt
+          Compress-Archive `
+            -Path dist/DuplicateMediaFinder `
+            -DestinationPath dist/DuplicateMediaFinder-Windows.zip `
+            -CompressionLevel Optimal
+        shell: pwsh
+
+      - name: Test packaged app starts
+        shell: pwsh
+        run: |
+          $exe = Join-Path $PWD "dist/DuplicateMediaFinder/DuplicateMediaFinder.exe"
+          $process = Start-Process -FilePath $exe `
+            -ArgumentList @("--server", "--server.port=8502") `
+            -PassThru -WindowStyle Hidden
+          $healthy = $false
+          try {
+            for ($attempt = 0; $attempt -lt 60; $attempt++) {
+              if ($process.HasExited) {
+                throw "Packaged app exited with code $($process.ExitCode)"
+              }
+              try {
+                $response = Invoke-WebRequest `
+                  -UseBasicParsing `
+                  -Uri "http://127.0.0.1:8502/_stcore/health" `
+                  -TimeoutSec 2
+                if ($response.StatusCode -eq 200 -and $response.Content -eq "ok") {
+                  $healthy = $true
+                  break
+                }
+              }
+              catch {
+                Start-Sleep -Seconds 2
+              }
+            }
+            if (-not $healthy) {
+              throw "Packaged app did not become healthy"
+            }
+          }
+          finally {
+            if (-not $process.HasExited) {
+              Stop-Process -Id $process.Id -Force
+            }
+          }
+
+      - name: Publish ZIP on GitHub Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          gh release create $env:GITHUB_REF_NAME `
+            dist/DuplicateMediaFinder-Windows.zip `
+            --repo $env:GITHUB_REPOSITORY `
+            --title "Duplicate Media Finder $env:GITHUB_REF_NAME" `
+            --notes "Download DuplicateMediaFinder-Windows.zip and extract the complete folder. Run DuplicateMediaFinder.exe on Windows. Python is not needed on the computer using the app. For Android browser access, run StartMobile.bat from the extracted folder and use the PC's Wi-Fi address. This is not a native Android app."

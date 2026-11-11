@@ -3,6 +3,20 @@
 Follow the steps in order. The app is a Python project: you do **not** need
 Node.js, npm, or a `node_modules` folder.
 
+## Easiest way: download the Windows app
+
+If you only want to use the app and do not want to install Python:
+
+1. Open the [GitHub Releases page](https://github.com/hemugithub6329/duplicate-media-finder/releases/latest).
+2. Under **Assets**, download `DuplicateMediaFinder-Windows.zip`.
+3. Open the downloaded ZIP and extract the whole folder.
+4. Open the extracted folder and double-click `DuplicateMediaFinder.exe`.
+5. If the browser does not open, visit `http://localhost:8501`.
+
+Keep all extracted files together. Do not take out only the `.exe`. Windows
+may warn that the app is unsigned; review the warning and do not turn off
+antivirus protection.
+
 ## Part 1: Install the two tools (one time)
 
 ### Install Python
