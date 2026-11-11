@@ -1,5 +1,8 @@
 # Virtual environment
 venv/
+build/
+dist/
+*.spec
 
 # Python cache
 __pycache__/
@@ -10,6 +13,7 @@ __pycache__/
 
 # Cache files
 .duplicate_cache.json
+.duplicate_thumbs/
 
 # Editor folders
 .vscode/
